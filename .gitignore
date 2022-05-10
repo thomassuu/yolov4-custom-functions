@@ -1,3 +1,5 @@
 env/
 checkpoints/
 *.weights
+pandas_tutorials
+data/records/

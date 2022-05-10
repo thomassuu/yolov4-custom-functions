@@ -7,6 +7,15 @@ import pytesseract
 from core.utils import read_class_names
 from core.config import cfg
 
+# IMPORTANCE: *data* must match the keys of collected_dict
+def record_data(collected_dict, **data):
+    for key,val in data.items():
+        if key not in collected_dict.keys():
+            print("{} is not part of data structure. Misalignment occured...".format(key))
+            continue
+        collected_dict[key].append(val)
+
+
 # function to count objects, can return total classes or count per class
 def count_objects(data, by_class = False, allowed_classes = list(read_class_names(cfg.YOLO.CLASSES).values())):
     boxes, scores, classes, num_objects = data

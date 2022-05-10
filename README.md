@@ -351,6 +351,8 @@ detect.py:
     (default: False)
   --crop: crop detections and save as new images
     (default: False)
+  --record: csv file to record detected data
+    (default: '')
     
 detect_video.py:
   --video: path to input video (use 0 for webcam)
@@ -381,6 +383,8 @@ detect_video.py:
     (default: False)
   --crop: crop detections and save as new images
     (default: False)
+  --record: csv file to record detected data
+    (default: '')
 ```
 
 ### References  

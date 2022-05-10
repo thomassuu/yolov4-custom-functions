@@ -15,6 +15,7 @@ from PIL import Image
 import cv2
 import numpy as np
 import tensorflow as tf
+import pandas as pd
 
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416',
@@ -32,8 +33,16 @@ flags.DEFINE_boolean('info', False, 'print info on detections')
 flags.DEFINE_boolean('crop', False, 'crop detections from images')
 flags.DEFINE_boolean('ocr', False, 'perform generic OCR on detection regions')
 flags.DEFINE_boolean('plate', False, 'perform license plate recognition')
+flags.DEFINE_string('record', '', 'csv file to write collected data to')
 
 def main(_argv):
+    collected_data = {
+        'date': [],
+        'time': [],
+        'obj': [],
+        'num_of_obj': []
+    }
+    
     config = tf.compat.v1.ConfigProto()
     config.gpu_options.allow_growth = True
     session = tf.compat.v1.InteractiveSession(config=config)
@@ -129,13 +138,20 @@ def main(_argv):
             counted_classes = count_objects(pred_bbox, by_class = True, allowed_classes=allowed_classes)
             # loop through dict and print
             for key, value in counted_classes.items():
-                date,time = utils.get_time()
-                print("[{} {}] Number of {}s: {}".format(date, time, key, value))
+                curr_date,curr_time = utils.get_time()
+                if FLAGS.record:
+                    record_data(collected_data, date=curr_date, time=curr_time, obj=key, num_of_obj=value)
+                print("[{} {}] Number of {}s: {}".format(curr_date, curr_time, key, value))
             image = utils.draw_bbox(original_image, pred_bbox, FLAGS.info, counted_classes, allowed_classes=allowed_classes, read_plate = FLAGS.plate)
         else:
             image = utils.draw_bbox(original_image, pred_bbox, FLAGS.info, allowed_classes=allowed_classes, read_plate = FLAGS.plate)
         
         image = Image.fromarray(image.astype(np.uint8))
+        # create a dataframe and export it to csv
+        if FLAGS.record:
+            df = pd.DataFrame(collected_data)
+            assert FLAGS.record.endswith(".csv"),"Record file must end with .csv"
+            df.to_csv(FLAGS.record, index=False)
         if not FLAGS.dont_show:
             image.show()
         image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
