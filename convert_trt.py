@@ -10,8 +10,7 @@ from tensorflow.python.compiler.tensorrt import trt_convert as trt
 import core.utils as utils
 from tensorflow.python.saved_model import signature_constants
 import os
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+import tensorflow as tf
 
 flags.DEFINE_string('weights', './checkpoints/yolov4-416', 'path to weights file')
 flags.DEFINE_string('output', './checkpoints/yolov4-trt-fp16-416', 'path to output')
@@ -90,9 +89,9 @@ def save_trt():
   print("numb. of all_nodes in TensorRT graph:", all_nodes)
 
 def main(_argv):
-  config = ConfigProto()
+  config = tf.compat.v1.ConfigProto()
   config.gpu_options.allow_growth = True
-  session = InteractiveSession(config=config)
+  session = tf.compat.v1.InteractiveSession(config=config)
   save_trt()
 
 if __name__ == '__main__':

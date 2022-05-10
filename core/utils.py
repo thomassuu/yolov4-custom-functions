@@ -6,6 +6,15 @@ import tensorflow as tf
 import pytesseract
 from core.config import cfg
 import re
+from datetime import datetime
+
+# -------------------- USER-DEFINED FUNCTIONS -------------------------------
+def get_time():
+    now = datetime.now()
+    date_str = now.strftime("%d/%m/%Y")
+    time_str = now.strftime("%H:%M:%S")
+    return date_str, time_str
+# -------------------- USER-DEFINED FUNCTIONS -------------------------------
 
 # If you don't have tesseract executable in your PATH, include the following:
 # pytesseract.pytesseract.tesseract_cmd = r'<full_path_to_your_tesseract_executable>'
